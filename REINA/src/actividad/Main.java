@@ -22,38 +22,24 @@ public class Main {
 				tablero[ii][jj] = null;
 			}
 		}
-			
+			/**
+			 * da fallo en:
+			 *	x = 0, y = 3
+			 *	x = 2, y = 0
+			 */
 		int x = (int)(Math.random() * n);
 		int y = (int)(Math.random() * m);
 		r1 = new Reina(x, y, "R1");
-		tablero[x][y] = r1;
-		colocarReinas();
-//		colocarReinas2();
+		tablero[r1.x][r1.y] = r1;
+//		colocarReinas();
+//		colocarReinas2();	
 		imprimir();
-		recolocaR(r21);
+		recolocaR();
+//		imprimir();
+//		recolocaR(2);
+//		imprimir();
+//		recolocaR(3);
 		imprimir();
-		recolocaR(r22);
-		imprimir();
-		recolocaR(r23);
-		boolean coinciden = true;
-//		while(coinciden) {
-//			if(coincidenR(r21,r22)) {
-//				recolocaR(r21);
-//			} else if(coincidenR(r22,r23)) {
-//				recolocaR(r22);
-//			} else if (coincidenR(r23,r21)) {
-//				recolocaR(r23);
-//			} else {
-//				coinciden = false;
-//			}
-//		}
-		imprimir();
-	}
-	private static boolean coincidenR(Reina r2x1, Reina r2x2) {
-		if(r2x1.x == r2x2.x || r2x1.y == r2x2.y || Math.abs(r2x2.x - r2x1.x) == Math.abs(r2x2.y - r2x1.y)) {
-			return true;
-		}
-		return false;
 	}
 
 	private static void imprimir() {
@@ -71,114 +57,103 @@ public class Main {
 		}
 	}
 	
-	private static void colocarReinas() {
-		int x = (int)(Math.random() * tablero.length);
-		int y = (int)(Math.random() * tablero[0].length);
-		while(x == r1.x && y == r1.y) {
-			x = (int)(Math.random() * tablero.length);
-			y = (int)(Math.random() * tablero[0].length);
-		}
-		r21 = new Reina(x, y, "R21");
-		colocaR(r21);
-		x = (int)(Math.random() * tablero.length);
-		y = (int)(Math.random() * tablero[0].length);
-		while((x == r1.x && y == r1.y) || (x == r21.x && y == r21.y)) {
-			x = (int)(Math.random() * tablero.length);
-			y = (int)(Math.random() * tablero[0].length);
-		}
-		r22 = new Reina(x, y, "R22");
-		colocaR(r22);
-		x = (int)(Math.random() * tablero.length);
-		y = (int)(Math.random() * tablero[0].length);
-		while((x == r1.x && y == r1.y) || (x == r21.x && y == r21.y) || (x == r22.x && y == r22.y)) {
-			x = (int)(Math.random() * tablero.length);
-			y = (int)(Math.random() * tablero[0].length);
-		}
-		r23 = new Reina(x, y, "R23");
-		colocaR(r23);
-	}
 	private static void colocaR(Reina r2x) {
 		tablero[r2x.x][r2x.y] = r2x;
 	}
 	
-	private static void recolocaR(Reina r2x) {
-		if(r2x.x == r21.x && r2x.y == r21.y) {
-			tablero[r2x.x][r2x.y] = null;
-			r21 = null;
-		} else if(r2x.x == r22.x && r2x.y == r22.y) {
-			tablero[r2x.x][r2x.y] = null;
-			r22 = null;
-		} else if(r2x.x == r23.x && r2x.y == r23.y) {
-			tablero[r2x.x][r2x.y] = null;
-			r23 = null;
+	private static void recolocaR() {
+		r21 = new Reina("R21");
+		loopr21:
+		for(int ii = 0; ii < tablero.length; ii++) {
+			for(int jj = 0; jj < tablero[0].length; jj++) {
+				if(!(r1.x == ii && r1.y == jj) && (daJaque(ii,jj) /*&& !(coinciden(ii, jj, r22) || coinciden(ii, jj, r23))*/)) {
+					r21.x = ii;
+					r21.y = jj;
+					colocaR(r21);
+					break loopr21;
+				}
+			}
 		}
-		if(r21 == null) {
-			loopr21:
-			for(int ii = 0; ii < tablero.length; ii++) {
-				for(int jj = 0; jj < tablero[0].length; jj++) {
-					if(( r1.x == ii || r1.y == jj || Math.abs(ii - r1.x) == Math.abs(jj - r1.y) ) /*&& !(coinciden(ii, jj, r22) || coinciden(ii, jj, r23))*/) {
-						r2x.x = ii;
-						r2x.y = jj;
-						r21 = r2x;
-						colocaR(r21);
-						break loopr21;
-					}
+		r22 = new Reina("R22");
+		loopr22:
+		for(int ii = 0; ii < tablero.length; ii++) {
+			for(int jj = 0; jj < tablero[0].length; jj++) {
+				if(!(r1.x == ii && r1.y == jj) && ((daJaque(ii,jj)) && ((!coinciden(ii, jj, r21) /*|| r1EstaEnElPutoMedio(ii, jj, r21)*/) /*|| coinciden(ii, jj, r23)*/))) {
+					r22.x = ii;
+					r22.y = jj;
+					colocaR(r22);
+					break loopr22;
+				} else if(r1EstaEnElPutoMedio(ii, jj, r21) && daJaque(ii,jj)){
+					r22.x = ii;
+					r22.y = jj;
+					colocaR(r22);
+					break loopr22;
 				}
 			}
-		} else if(r22 == null) {
-			loopr22:
-			for(int ii = 0; ii < tablero.length; ii++) {
-				for(int jj = 0; jj < tablero[0].length; jj++) {
-					if(( r1.x == ii || r1.y == jj || Math.abs(ii - r1.x) == Math.abs(jj - r1.y) ) && !(coinciden(ii, jj, r21) /*|| coinciden(ii, jj, r23)*/)) {
-						r2x.x = ii;
-						r2x.y = jj;
-						r22 = r2x;
-						colocaR(r22);
-						break loopr22;
-					}
-				}
-			}
-		} else if(r23 == null) {
-			loopr23:
-			for(int ii = 0; ii < tablero.length; ii++) {
-				for(int jj = 0; jj < tablero[0].length; jj++) {
-					if(( r1.x == ii || r1.y == jj || Math.abs(ii - r1.x) == Math.abs(jj - r1.y) ) && !(coinciden(ii, jj, r21) || coinciden(ii, jj, r22))) {
-						if(coinciden(ii,jj,r21) && !coinciden(ii,jj,r22)) {
-							
-							recolocaR(r21);
-						}
-						
-						
-						
-						r2x.x = ii;
-						r2x.y = jj;
-						r23 = r2x;
-						colocaR(r23);
-						break loopr23;
-					} else {
-						System.out.println("Solucion pa 3 reinas no disponible");
-					}
+		}
+		r23 = new Reina("R23");
+		loopr23:
+		for(int ii = 0; ii < tablero.length; ii++) {
+			for(int jj = 0; jj < tablero[0].length; jj++) {
+				if(!(r1.x == ii && r1.y == jj) && ((daJaque(ii,jj) && !coinciden(ii, jj, r21) && !coinciden(ii, jj, r22) ))) {
+					r23.x = ii;
+					r23.y = jj;
+					colocaR(r23);
+					break loopr23;
+				} else if(r1EstaEnElPutoMedio(ii,jj,r21) && !coinciden(ii, jj, r22)){
+					r23.x = ii;
+					r23.y = jj;
+					colocaR(r23);
+					break loopr23;
+				} else if(r1EstaEnElPutoMedio(ii, jj, r22) && !coinciden(ii, jj, r21)) {
+					r23.x = ii;
+					r23.y = jj;
+					colocaR(r23);
+					break loopr23;
 				}
 			}
 		}
 	}
-	
-	private static boolean coinciden(int ii, int jj, Reina r2x) {
-		if(r2x.x == ii || r2x.y == jj || Math.abs(ii - r2x.x) == Math.abs(jj - r2x.y)) {
+	private static boolean daJaque(int ii, int jj) {
+		if (r1.x == ii || r1.y == jj || Math.abs(ii - r1.x) == Math.abs(jj - r1.y)){
 			return true;
 		}
 		return false;
 	}
-	
-	public static void reinasCoinciden() {
-		if(r21.x == r22.x || r21.y == r22.y || Math.abs(r21.x - r22.x) == Math.abs(r21.y - r22.y)) {
-			recolocaR(r21);
-		} else if(r22.x == r23.x || r22.y == r23.y || Math.abs(r22.x - r23.x) == Math.abs(r22.y - r23.y)) {
-			recolocaR(r22);
-		} else if(r23.x == r21.x || r23.y == r21.y || Math.abs(r23.x - r21.x) == Math.abs(r23.y - r21.y)) {
-			recolocaR(r23);
-		} else {
-			
+	private static boolean r1EstaEnElPutoMedio(int ii, int jj, Reina r2x) {
+		if(((r2x.x < r1.x && r1.x < ii) && r1.y == jj)) {
+			System.out.println("1.-" + ii + " " + jj);
+			return true;
+		} else if((r2x.y < r1.y && r1.y < jj) && r1.x == ii) {
+			System.out.println("2.-" + ii + " " + jj);
+			return true;
+		} else if((r2x.x > r1.x && r1.x > ii) && r1.y == jj) {
+			System.out.println("3.-" + ii + " " + jj);
+			return true;
+		} else if((r2x.y > r1.y && r1.y > jj) && r1.x == ii) {
+			System.out.println("4.-" + ii + " " + jj);
+			return true;
+		} else if((Math.abs(r2x.x - r1.x) == Math.abs(r2x.y - r1.y)) && (Math.abs(ii - r1.x) == Math.abs(jj - r1.y)) && (Math.abs(ii - r1.x) == Math.abs(jj - r1.y))) {
+			if((r2x.y < r1.y && r1.y < jj) && (r2x.x < r1.x && r1.x < ii)) {
+				System.out.println("5.-" + ii + " " + jj);
+				return true;
+			} else if((r2x.y > r1.y && r1.y > jj) && (r2x.x > r1.x && r1.x > ii)) {
+				System.out.println("6.-" + ii + " " + jj);
+				return true;
+			} else if((r2x.y < r1.y && r1.y < jj) && (r2x.x > r1.x && r1.x > ii)) {
+				System.out.println("7.-" + ii + " " + jj);
+				return true;
+			} else if((r2x.y > r1.y && r1.y > jj) && (r2x.x < r1.x && r1.x < ii)) {
+				System.out.println("8.-" + ii + " " + jj);
+				return true;
+			}
 		}
+		return false;
+	}
+	private static boolean coinciden(int ii, int jj, Reina r2x) {
+		if(/*(r2x.x == ii && r2x.y == jj) || */r2x.x == ii || r2x.y == jj || Math.abs(ii - r2x.x) == Math.abs(jj - r2x.y)) {
+			return true;
+		}
+		return false;
 	}
 }

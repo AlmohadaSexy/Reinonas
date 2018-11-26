@@ -8,6 +8,10 @@ public class Reina {
 		this.y = y;
 		this.name = name;
 	}
+	
+	public Reina(String name) {
+		this.name = name;
+	}
 	public void setString(String name) {
 		this.name = name;
 	}
